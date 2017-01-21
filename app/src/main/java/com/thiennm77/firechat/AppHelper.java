@@ -33,4 +33,8 @@ public class AppHelper {
         return matcher.matches();
     }
 
+    public static boolean validateUsername(String username) {
+        return username.length() >= AppHelper.MIN_USERNAME_LENGTH && username.length() <= AppHelper.MAX_USERNAME_LENGTH;
+    }
+
 }

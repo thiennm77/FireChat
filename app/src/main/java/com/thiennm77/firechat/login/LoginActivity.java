@@ -92,9 +92,9 @@ public class LoginActivity extends Activity implements LoginContract.View {
 
     @Override
     public void showToast(String message) {
-        Toast toast = Toast.makeText(this, message, (message.length() < 70) ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 100);
-        toast.show();
+        Toast.makeText(this, message,
+                (message.length() < 70) ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG)
+                .show();
     }
 
     @Override
