@@ -9,7 +9,7 @@
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:background="@color/colorPrimary"
-    tools:context="com.thiennm77.firechat.LoginActivity">
+    tools:context="com.thiennm77.firechat.login.LoginActivity">
 
     <TextView
         android:layout_width="match_parent"
