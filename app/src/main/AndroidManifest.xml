@@ -10,22 +10,21 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".login.LoginActivity"
-            android:theme="@style/AppYellowTheme">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            android:theme="@style/AppBlueTheme">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+
+                 <category android:name="android.intent.category.LAUNCHER" />
+                 </intent-filter>
         </activity>
         <activity
             android:name=".register.RegisterActivity"
-            android:theme="@style/AppYellowTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:theme="@style/AppBlueTheme">
         </activity>
+        <activity
+            android:name=".home.HomeActivity"
+            android:label="@string/title_activity_home"></activity>
     </application>
 
 </manifest>

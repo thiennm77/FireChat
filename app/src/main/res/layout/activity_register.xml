@@ -20,7 +20,7 @@
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_arrow_left_black_48dp"
+            android:src="@drawable/ic_keyboard_arrow_left_white_48dp"
             android:layout_marginTop="30dp"
             android:background="@null"/>
 
@@ -95,6 +95,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/register"
-        style="@style/BlackButton"/>
+        style="@style/WhiteButton"/>
 
 </LinearLayout>
