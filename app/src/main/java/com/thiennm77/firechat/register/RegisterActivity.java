@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.R;
 import com.thiennm77.firechat.home.HomeActivity;
 
@@ -68,6 +68,7 @@ public class RegisterActivity extends Activity implements RegisterContract.View 
                 mPasswordWrapper.setErrorEnabled(false);
                 mUsernameWrapper.setErrorEnabled(false);
                 mConfirmPasswordWrapper.setErrorEnabled(false);
+                AppHelper.hideKeyboard(RegisterActivity.this);
                 mPresenter.attempRegister(
                         mEmail.getText().toString(),
                         mUsername.getText().toString(),
@@ -138,7 +139,7 @@ public class RegisterActivity extends Activity implements RegisterContract.View 
         mProgressDialog = new ProgressDialog(this, R.style.WhiteProgressDialog);
         mProgressDialog.setTitle("Please wait..");
         mProgressDialog.setMessage("Creating account...");
-        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
     }
 

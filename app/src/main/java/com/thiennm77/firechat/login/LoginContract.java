@@ -1,6 +1,7 @@
 package com.thiennm77.firechat.login;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.thiennm77.firechat.BasePresenter;
 
 interface LoginContract {
 
@@ -22,17 +23,13 @@ interface LoginContract {
 
     }
 
-    interface  Presenter {
+    interface  Presenter extends BasePresenter {
 
         void attempLogin(String email, String password);
 
         void register();
 
         void login();
-
-        void addAuthStateListener();
-
-        void removeAuthStateListener();
     }
 
 }

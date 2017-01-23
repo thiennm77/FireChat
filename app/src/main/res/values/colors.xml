@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2196F3</color>
-    <color name="colorPrimaryDark">#1976D2</color>
-    <color name="colorAccent">#2979FF</color>
+    <color name="colorPrimary">#2196F3</color> <!-- blue_500 -->
+    <color name="colorPrimaryDark">#1976D2</color> <!-- blue_700 -->
+    <color name="colorAccent">#FF9100</color> <!-- orange_a400 -->
     <color name="dark_grey">#555555</color>
     <color name="blue_50">#E3F2FD</color>
     <color name="blue_100">#BBDEFB</color>

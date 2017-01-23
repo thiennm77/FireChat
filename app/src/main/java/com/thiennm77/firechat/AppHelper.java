@@ -1,8 +1,11 @@
 package com.thiennm77.firechat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +37,16 @@ public class AppHelper {
     }
 
     public static boolean validateUsername(String username) {
-        return username.length() >= AppHelper.MIN_USERNAME_LENGTH && username.length() <= AppHelper.MAX_USERNAME_LENGTH;
+        return username.length() >= AppHelper.MIN_USERNAME_LENGTH &&
+                username.length() <= AppHelper.MAX_USERNAME_LENGTH;
     }
 
+    public static void hideKeyboard(Activity activity) {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 }

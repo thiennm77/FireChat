@@ -10,7 +10,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class FirebaseHelper {
 
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private static FirebaseAuth.AuthStateListener mListener;
 
     public static void signIn(String email, String password, OnCompleteListener<AuthResult> onCompleteListener) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(onCompleteListener);
@@ -20,21 +19,21 @@ public class FirebaseHelper {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(onCompleteListener);
     }
 
+    public static void signOut() {
+        mAuth.signOut();
+    }
+
     public static void setUsername(FirebaseUser user, String username) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child("users").child(user.getUid()).setValue(username);
     }
 
     public static void addAuthStateListener(FirebaseAuth.AuthStateListener listener) {
-        mListener = listener;
-        mAuth.addAuthStateListener(mListener);
+        mAuth.addAuthStateListener(listener);
     }
 
-    public static void removeAuthStateListener() {
-        if (mListener != null) {
-            mAuth.removeAuthStateListener(mListener);
-            mListener = null;
-        }
+    public static void removeAuthStateListener(FirebaseAuth.AuthStateListener listener) {
+        mAuth.removeAuthStateListener(listener);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.thiennm77.firechat.register;
 
+import com.thiennm77.firechat.BasePresenter;
+
 interface RegisterContract {
 
     interface View {
@@ -22,15 +24,11 @@ interface RegisterContract {
 
     }
 
-    interface Presenter {
+    interface Presenter  extends BasePresenter {
 
         void attempRegister(String email, String username, String password, String confirmPassword);
 
         void login();
-
-        void addAuthStateListener();
-
-        void removeAuthStateListener();
 
     }
 

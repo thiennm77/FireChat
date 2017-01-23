@@ -10,17 +10,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.FirebaseHelper;
 
-public class RegisterPresenter implements RegisterContract.Presenter {
+class RegisterPresenter implements RegisterContract.Presenter {
 
     private RegisterContract.View mView;
-    private boolean isAuthenticated = false;
+    private FirebaseAuth.AuthStateListener mListener;
 
-    public RegisterPresenter(RegisterContract.View view) {
+    RegisterPresenter(RegisterContract.View view) {
         mView = view;
     }
 
@@ -74,7 +72,8 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
     @Override
     public void addAuthStateListener() {
-        FirebaseHelper.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+
+        mListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mView.closeProgressDialog();
@@ -88,11 +87,14 @@ public class RegisterPresenter implements RegisterContract.Presenter {
                     Log.d(AppHelper.TAG, "Register > onAuthStateChanged:signed_out");
                 }
             }
-        });
+        };
+
+        FirebaseHelper.addAuthStateListener(mListener);
     }
 
     @Override
     public void removeAuthStateListener() {
-        FirebaseHelper.removeAuthStateListener();
+        FirebaseHelper.removeAuthStateListener(mListener);
+        mListener = null;
     }
 }

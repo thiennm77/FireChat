@@ -13,13 +13,15 @@ import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.FirebaseHelper;
 
 
-public class LoginPresenter implements LoginContract.Presenter {
+class LoginPresenter implements LoginContract.Presenter {
 
     private LoginContract.View mView;
+    private FirebaseAuth.AuthStateListener mListener;
 
-    public LoginPresenter(LoginContract.View view) {
+    LoginPresenter(LoginContract.View view) {
         mView = view;
     }
+
 
     @Override
     public void attempLogin(String email, String password) {
@@ -65,7 +67,8 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void addAuthStateListener() {
-        FirebaseHelper.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+
+        mListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mView.closeProgressDialog();
@@ -79,11 +82,14 @@ public class LoginPresenter implements LoginContract.Presenter {
                     Log.d(AppHelper.TAG, "Login > onAuthStateChanged:signed_out");
                 }
             }
-        });
+        };
+
+        FirebaseHelper.addAuthStateListener(mListener);
     }
 
     @Override
     public void removeAuthStateListener() {
-        FirebaseHelper.removeAuthStateListener();
+        FirebaseHelper.removeAuthStateListener(mListener);
+        mListener = null;
     }
 }

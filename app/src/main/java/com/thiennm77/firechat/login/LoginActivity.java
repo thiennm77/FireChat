@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.R;
 import com.thiennm77.firechat.home.HomeActivity;
 import com.thiennm77.firechat.register.RegisterActivity;
@@ -56,7 +56,9 @@ public class LoginActivity extends Activity implements LoginContract.View {
             public void onClick(View v) {
                 mEmailWrapper.setErrorEnabled(false);
                 mPasswordWrapper.setErrorEnabled(false);
+                AppHelper.hideKeyboard(LoginActivity.this);
                 mPresenter.attempLogin(mEmail.getText().toString(), mPassword.getText().toString());
+                //showProgressDialog();
             }
         });
 
@@ -116,12 +118,14 @@ public class LoginActivity extends Activity implements LoginContract.View {
         mProgressDialog = new ProgressDialog(this, R.style.WhiteProgressDialog);
         mProgressDialog.setTitle("Please wait..");
         mProgressDialog.setMessage("Authenticating...");
-        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
     }
 
     @Override
     public void closeProgressDialog() {
-
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
     }
 }
