@@ -5,17 +5,35 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.R;
+import com.thiennm77.firechat.home.custom.ConversationsAdapter;
 import com.thiennm77.firechat.login.LoginActivity;
+import com.thiennm77.firechat.models.Conversation;
 
+import java.util.ArrayList;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends Activity implements HomeContract.View {
 
-    HomeContract.Presenter mPresenter;
+    private HomeContract.Presenter mPresenter;
+
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.conversationsRecyclerView)
+    RecyclerView mConversationsView;
+
+    ConversationsAdapter mAdapter = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +42,32 @@ public class HomeActivity extends Activity implements HomeContract.View {
 
         mPresenter = new HomePresenter(this);
         mPresenter.addAuthStateListener();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
+                    mPresenter.getConversationsList();
+                } else {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    showToast("No internet connection");
+                }
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+
+        mAdapter = new ConversationsAdapter();
+        mConversationsView.setAdapter(mAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mConversationsView.setLayoutManager(linearLayoutManager);
+
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
+            mPresenter.getConversationsList();
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            showToast("No internet connection");
+        }
     }
 
     @Override
@@ -68,5 +112,18 @@ public class HomeActivity extends Activity implements HomeContract.View {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onRefreshCompleted(ArrayList<Conversation> conversations) {
+        mAdapter.refresh(conversations);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(this, message,
+                (message.length() < 70) ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG)
+                .show();
     }
 }

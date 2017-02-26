@@ -69,7 +69,7 @@ public class RegisterActivity extends Activity implements RegisterContract.View 
                 mUsernameWrapper.setErrorEnabled(false);
                 mConfirmPasswordWrapper.setErrorEnabled(false);
                 AppHelper.hideKeyboard(RegisterActivity.this);
-                mPresenter.attempRegister(
+                mPresenter.attemptRegister(
                         mEmail.getText().toString(),
                         mUsername.getText().toString(),
                         mPassword.getText().toString(),

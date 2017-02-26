@@ -14,5 +14,5 @@
     <string name="invalid_username">Invalid username</string>
     <string name="short_password">Password must be at least 6 characters long</string>
     <string name="not_match_password">Password does not match the confirm password</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">Conversations</string>
 </resources>

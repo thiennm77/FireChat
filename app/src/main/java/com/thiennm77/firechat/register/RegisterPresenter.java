@@ -23,7 +23,7 @@ class RegisterPresenter implements RegisterContract.Presenter {
     }
 
     @Override
-    public void attempRegister(String email, final String username, String password, String confirmPassword) {
+    public void attemptRegister(String email, final String username, String password, String confirmPassword) {
         if (!AppHelper.isNetworkAvailable((Context) mView)) {
             mView.showToast("No Internet connection.");
             return;

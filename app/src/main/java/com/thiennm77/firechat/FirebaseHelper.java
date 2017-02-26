@@ -4,12 +4,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.thiennm77.firechat.home.HomeContract;
+import com.thiennm77.firechat.models.Conversation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FirebaseHelper {
 
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static JSONObject mUsernames;
+
+    public static String getCurrentUID() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            return user.getUid();
+        }
+        return "";
+    }
 
     public static void signIn(String email, String password, OnCompleteListener<AuthResult> onCompleteListener) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(onCompleteListener);
@@ -36,4 +56,70 @@ public class FirebaseHelper {
         mAuth.removeAuthStateListener(listener);
     }
 
+    public static String getUsername(String uid) {
+
+        try {
+            String username = mUsernames.get(uid).toString();
+            return username;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+
+    public static void getUsernamesList(final HomeContract.Presenter presenter) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    mUsernames = new JSONObject(dataSnapshot.getValue().toString());
+                    getConversationsList(presenter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static void getConversationsList(final HomeContract.Presenter presenter) {
+        final ArrayList<Conversation> result = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        final String uid = getCurrentUID();
+
+        databaseReference.child("conversations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    String key = child.getKey();
+                    if (key.contains(uid)) { // conversation relating to current user
+                        ArrayList messages = (ArrayList) child.getValue();
+                        HashMap<String, String> lastMessage = (HashMap<String, String>) messages.get(messages.size() - 1);
+                        String otherUid = key.replace(uid, "").replace("_", "");
+                        String username = getUsername(otherUid);
+                        String message;
+                        if (lastMessage.get("sender").toString().equals(uid)) {
+                            message = "You: " + lastMessage.get("message").toString();
+                        } else {
+                            message = lastMessage.get("message").toString();
+                        }
+
+                        Conversation conversation = new Conversation(username, message);
+                        result.add(conversation);
+                    }
+                }
+                presenter.onGettingConversationsListCompleted(result);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 }

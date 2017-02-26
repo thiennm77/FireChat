@@ -26,7 +26,7 @@ interface RegisterContract {
 
     interface Presenter  extends BasePresenter {
 
-        void attempRegister(String email, String username, String password, String confirmPassword);
+        void attemptRegister(String email, String username, String password, String confirmPassword);
 
         void login();
 

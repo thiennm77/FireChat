@@ -7,6 +7,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.FirebaseHelper;
+import com.thiennm77.firechat.models.Conversation;
+
+import java.util.ArrayList;
 
 class HomePresenter implements HomeContract.Presenter {
 
@@ -21,6 +24,17 @@ class HomePresenter implements HomeContract.Presenter {
     public void logOut() {
         FirebaseHelper.signOut();
     }
+
+    @Override
+    public void onGettingConversationsListCompleted(ArrayList<Conversation> conversations) {
+        mView.onRefreshCompleted(conversations);
+    }
+
+    @Override
+    public void getConversationsList() {
+        FirebaseHelper.getUsernamesList(this);
+    }
+
 
     @Override
     public void addAuthStateListener() {
