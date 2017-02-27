@@ -38,8 +38,12 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void addAuthStateListener() {
+    public void sendMessage(String message) {
+        FirebaseHelper.sendMessage(mId, mCurrentUser, message);
+    }
 
+    @Override
+    public void addAuthStateListener() {
         mListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

@@ -41,6 +41,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         if (!sender.equals("You")) {
             holder.message.setBackground(context.getResources().getDrawable(R.drawable.message_background_light_grey));
             holder.message.setTextColor(context.getResources().getColor(android.R.color.black));
+        } else {
+            holder.message.setBackground(context.getResources().getDrawable(R.drawable.message_background_accent));
+            holder.message.setTextColor(context.getResources().getColor(android.R.color.white));
         }
     }
 
@@ -51,6 +54,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     public void updateWholeList(ArrayList<Message> messages) {
         this.messages = messages;
+        notifyDataSetChanged();
+    }
+
+    public void addMessage(Message message) {
+        messages.add(message);
         notifyDataSetChanged();
     }
 

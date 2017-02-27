@@ -24,6 +24,7 @@ public class FirebaseHelper {
 
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static JSONObject mUsernames;
+    private static ArrayList<Message> mMessages;
 
     public static String getCurrentUID() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -126,6 +127,7 @@ public class FirebaseHelper {
     }
 
     public static void getMessagesList(final ChatContract.Presenter presenter, String id, final String uid, final String username) {
+        mMessages = new ArrayList<>();
         final ArrayList<Message> result = new ArrayList<>();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -136,8 +138,9 @@ public class FirebaseHelper {
                 int size = messages.size();
                 for (int i = 0; i < size; i++) {
                     HashMap<String, String> messageItem = (HashMap<String, String>) messages.get(i);
+                    String origSender = messageItem.get("sender");
                     String sender;
-                    if (messageItem.get("sender").equals(uid)) {
+                    if (origSender.equals(uid)) {
                         sender = "You";
                     } else {
                         sender = username;
@@ -145,6 +148,7 @@ public class FirebaseHelper {
                     String message = messageItem.get("message");
                     Message newMsg = new Message(sender, message);
                     result.add(newMsg);
+                    mMessages.add(new Message(origSender, message));
                 }
                 presenter.onGettingMessagesListCompleted(result);
             }
@@ -154,5 +158,12 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    public static void sendMessage(String id, String sender, String message) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        Message newMsg = new Message(sender, message);
+        mMessages.add(newMsg);
+        databaseReference.child("conversations").child(id).setValue(mMessages);
     }
 }

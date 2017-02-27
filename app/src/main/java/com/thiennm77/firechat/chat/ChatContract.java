@@ -21,6 +21,7 @@ public interface ChatContract {
 
         void onGettingMessagesListCompleted(ArrayList<Message> messages);
 
+        void sendMessage(String message);
     }
 
 }

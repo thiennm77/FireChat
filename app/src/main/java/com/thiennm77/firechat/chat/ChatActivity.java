@@ -70,6 +70,19 @@ public class ChatActivity extends Activity implements ChatContract.View {
         mChatList.setLayoutManager(linearLayoutManager);
 
         mPresenter.getMessagesList();
+
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = mChatMessage.getText().toString();
+                if (!msg.isEmpty()) {
+                    mPresenter.sendMessage(msg);
+                    mChatMessage.setText("");
+                    mAdapter.addMessage(new Message("You", msg));
+                    mChatList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                }
+            }
+        });
     }
 
     @Override

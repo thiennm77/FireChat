@@ -22,8 +22,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:padding="10dp"
-        android:textColor="@android:color/white"
-        android:background="@drawable/message_background_accent"/>
+        android:padding="10dp" />
 
 </LinearLayout>
