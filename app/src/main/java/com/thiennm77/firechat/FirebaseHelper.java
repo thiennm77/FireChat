@@ -1,5 +1,7 @@
 package com.thiennm77.firechat;
 
+import android.provider.ContactsContract;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +15,8 @@ import com.thiennm77.firechat.chat.ChatContract;
 import com.thiennm77.firechat.home.HomeContract;
 import com.thiennm77.firechat.models.Conversation;
 import com.thiennm77.firechat.models.Message;
+import com.thiennm77.firechat.models.User;
+import com.thiennm77.firechat.search.SearchContract;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,6 +126,29 @@ public class FirebaseHelper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static void getUsersList(final SearchContract.Presenter presenter) {
+        final ArrayList<User> result = new ArrayList<>();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    String uid = child.getKey();
+                    String username = child.getValue().toString();
+                    User user = new User(uid, username);
+                    result.add(user);
+                }
+                presenter.onGettingUsersListCompleted(result);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

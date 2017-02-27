@@ -5,11 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.thiennm77.firechat.AppHelper;
@@ -17,13 +20,14 @@ import com.thiennm77.firechat.R;
 import com.thiennm77.firechat.home.custom.ConversationsAdapter;
 import com.thiennm77.firechat.login.LoginActivity;
 import com.thiennm77.firechat.models.Conversation;
+import com.thiennm77.firechat.search.SearchActivity;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeActivity extends Activity implements HomeContract.View {
+public class HomeActivity extends AppCompatActivity implements HomeContract.View {
 
     private HomeContract.Presenter mPresenter;
 
@@ -33,6 +37,9 @@ public class HomeActivity extends Activity implements HomeContract.View {
     @BindView(R.id.conversationsRecyclerView)
     RecyclerView mConversationsView;
 
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+
     ConversationsAdapter mAdapter = null;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +48,6 @@ public class HomeActivity extends Activity implements HomeContract.View {
         ButterKnife.bind(this);
 
         mPresenter = new HomePresenter(this);
-        mPresenter.addAuthStateListener();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -55,12 +61,20 @@ public class HomeActivity extends Activity implements HomeContract.View {
                 }
             }
         });
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         mAdapter = new ConversationsAdapter();
         mConversationsView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mConversationsView.setLayoutManager(linearLayoutManager);
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mSwipeRefreshLayout.setRefreshing(true);
         if (AppHelper.isNetworkAvailable(HomeActivity.this)) {

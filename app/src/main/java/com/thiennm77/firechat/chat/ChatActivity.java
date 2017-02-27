@@ -3,6 +3,7 @@ package com.thiennm77.firechat.chat;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChatActivity extends Activity implements ChatContract.View {
+public class ChatActivity extends AppCompatActivity implements ChatContract.View {
 
     @BindView(R.id.loading)
     TextView mLoading;
@@ -52,7 +53,7 @@ public class ChatActivity extends Activity implements ChatContract.View {
         setContentView(R.layout.activity_chat);
         ButterKnife.bind(this);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         mUsername = intent.getStringExtra(ChatActivity.EXTRA_USERNAME);

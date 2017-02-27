@@ -29,7 +29,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/dark_grey"></LinearLayout>
+        android:background="@color/dark_grey">
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -37,7 +39,7 @@
         android:layout_height="50dp"
         android:weightSum="20">
 
-        <!-- Dummy item to prevent TextView from receiving focus -->
+        <!-- Dummy item to prevent EditText from receiving focus -->
         <LinearLayout
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -53,7 +55,6 @@
             android:layout_marginLeft="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:textCursorDrawable="@drawable/chat_cursor"
             android:hint="Write a message..."/>
 
         <ImageButton
