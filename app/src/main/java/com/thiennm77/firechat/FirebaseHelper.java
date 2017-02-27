@@ -24,7 +24,8 @@ public class FirebaseHelper {
 
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static JSONObject mUsernames;
-    private static ArrayList<Message> mMessages;
+    private static ArrayList<Message> mMessages = null;
+    private static ValueEventListener mValueEventListener = null;
 
     public static String getCurrentUID() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -70,7 +71,6 @@ public class FirebaseHelper {
 
         return "";
     }
-
 
     public static void getUsernamesList(final HomeContract.Presenter presenter) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -165,5 +165,50 @@ public class FirebaseHelper {
         Message newMsg = new Message(sender, message);
         mMessages.add(newMsg);
         databaseReference.child("conversations").child(id).setValue(mMessages);
+    }
+
+    public static void addChatListener(final ChatContract.Presenter presenter, String id, final String uid, final String username) {
+        if (mMessages == null) {
+            mMessages = new ArrayList<>();
+        }
+        final ArrayList<Message> result = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        mValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList messages = (ArrayList) dataSnapshot.getValue();
+                int size = messages.size();
+                for (int i = mMessages.size(); i < size; i++) {
+                    HashMap<String, String> messageItem = (HashMap<String, String>) messages.get(i);
+                    String origSender = messageItem.get("sender");
+                    String sender;
+                    if (origSender.equals(uid)) {
+                        sender = "You";
+                    } else {
+                        sender = username;
+                    }
+                    String message = messageItem.get("message");
+                    Message newMsg = new Message(sender, message);
+                    result.add(newMsg);
+                    mMessages.add(new Message(origSender, message));
+                }
+                presenter.onGettingMessagesListCompleted(result);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        databaseReference.child("conversations").child(id).addValueEventListener(mValueEventListener);
+    }
+
+    public static void removeChatListener(String id) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("conversations").child(id).removeEventListener(mValueEventListener);
+        mValueEventListener = null;
+        mMessages = null;
     }
 }

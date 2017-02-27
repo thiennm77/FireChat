@@ -69,8 +69,6 @@ public class ChatActivity extends Activity implements ChatContract.View {
         linearLayoutManager.setStackFromEnd(true);
         mChatList.setLayoutManager(linearLayoutManager);
 
-        mPresenter.getMessagesList();
-
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,12 +87,14 @@ public class ChatActivity extends Activity implements ChatContract.View {
     protected void onStart() {
         super.onStart();
         mPresenter.addAuthStateListener();
+        mPresenter.addChatListener();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mPresenter.removeAuthStateListener();
+        mPresenter.removeChatListener();
     }
 
     @Override
@@ -116,5 +116,6 @@ public class ChatActivity extends Activity implements ChatContract.View {
         mAdapter.updateWholeList(messages);
         mLoading.setVisibility(View.GONE);
         mChatList.setVisibility(View.VISIBLE);
+        mChatList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
     }
 }

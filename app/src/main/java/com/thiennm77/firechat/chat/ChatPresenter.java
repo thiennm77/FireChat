@@ -43,6 +43,16 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
+    public void addChatListener() {
+        FirebaseHelper.addChatListener(this, mId, mCurrentUser, mUsername);
+    }
+
+    @Override
+    public void removeChatListener() {
+        FirebaseHelper.removeChatListener(mId);
+    }
+
+    @Override
     public void addAuthStateListener() {
         mListener = new FirebaseAuth.AuthStateListener() {
             @Override
