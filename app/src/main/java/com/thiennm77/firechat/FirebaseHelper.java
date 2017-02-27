@@ -9,8 +9,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.thiennm77.firechat.chat.ChatContract;
 import com.thiennm77.firechat.home.HomeContract;
 import com.thiennm77.firechat.models.Conversation;
+import com.thiennm77.firechat.models.Message;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,7 +112,7 @@ public class FirebaseHelper {
                             message = lastMessage.get("message").toString();
                         }
 
-                        Conversation conversation = new Conversation(username, message);
+                        Conversation conversation = new Conversation(key, username, message);
                         result.add(conversation);
                     }
                 }
@@ -119,6 +121,37 @@ public class FirebaseHelper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static void getMessagesList(final ChatContract.Presenter presenter, String id, final String uid, final String username) {
+        final ArrayList<Message> result = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("conversations").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList messages = (ArrayList) dataSnapshot.getValue();
+                int size = messages.size();
+                for (int i = 0; i < size; i++) {
+                    HashMap<String, String> messageItem = (HashMap<String, String>) messages.get(i);
+                    String sender;
+                    if (messageItem.get("sender").equals(uid)) {
+                        sender = "You";
+                    } else {
+                        sender = username;
+                    }
+                    String message = messageItem.get("message");
+                    Message newMsg = new Message(sender, message);
+                    result.add(newMsg);
+                }
+                presenter.onGettingMessagesListCompleted(result);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

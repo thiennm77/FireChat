@@ -47,6 +47,7 @@ public class HomeActivity extends Activity implements HomeContract.View {
             @Override
             public void onRefresh() {
                 if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
+                    mAdapter.clear();
                     mPresenter.getConversationsList();
                 } else {
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -68,6 +69,18 @@ public class HomeActivity extends Activity implements HomeContract.View {
             mSwipeRefreshLayout.setRefreshing(false);
             showToast("No internet connection");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.addAuthStateListener();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPresenter.removeAuthStateListener();
     }
 
     @Override
