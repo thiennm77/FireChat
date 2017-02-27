@@ -1,8 +1,10 @@
 package com.thiennm77.firechat;
 
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -133,15 +135,18 @@ public class FirebaseHelper {
     public static void getUsersList(final SearchContract.Presenter presenter) {
         final ArrayList<User> result = new ArrayList<>();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        final String currenUid = getCurrentUID();
 
         databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     String uid = child.getKey();
-                    String username = child.getValue().toString();
-                    User user = new User(uid, username);
-                    result.add(user);
+                    if (!uid.equals(currenUid)) {
+                        String username = child.getValue().toString();
+                        User user = new User(uid, username);
+                        result.add(user);
+                    }
                 }
                 presenter.onGettingUsersListCompleted(result);
             }
@@ -237,5 +242,40 @@ public class FirebaseHelper {
         databaseReference.child("conversations").child(id).removeEventListener(mValueEventListener);
         mValueEventListener = null;
         mMessages = null;
+    }
+
+    public static void attemptCreatingNewConversation(final SearchContract.Presenter presenter, final String uid, final String username) {
+        final String currentUid = getCurrentUID();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("conversations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    String key = child.getKey();
+                    if (key.contains(currentUid) && key.contains(uid)) { // conversation already existed
+                        presenter.openConversation(key, username);
+                        return;
+                    }
+                }
+                final String newConversationId = currentUid + "_" + uid;
+                ArrayList<Message> msg = new ArrayList<>();
+                Message hi = new Message(currentUid, "Hi");
+                msg.add(hi);
+                databaseReference.child("conversations").child(newConversationId).setValue(msg)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            presenter.openConversation(newConversationId, username);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }

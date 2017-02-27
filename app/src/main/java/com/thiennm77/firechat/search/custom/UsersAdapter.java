@@ -4,10 +4,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thiennm77.firechat.R;
 import com.thiennm77.firechat.models.User;
+import com.thiennm77.firechat.search.SearchContract;
 
 import java.util.ArrayList;
 
@@ -17,9 +19,11 @@ import butterknife.ButterKnife;
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
     private ArrayList<User> mUsers;
+    private SearchContract.Presenter mPresenter;
 
-    public UsersAdapter() {
+    public UsersAdapter(SearchContract.Presenter presenter) {
         mUsers = new ArrayList<>();
+        mPresenter = presenter;
     }
 
 
@@ -32,8 +36,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        holder.uid.setText(mUsers.get(position).getUid());
-        holder.username.setText(mUsers.get(position).getUsername());
+        final String uid = mUsers.get(position).getUid();
+        final String username = mUsers.get(position).getUsername();
+        holder.uid.setText(uid);
+        holder.username.setText(username);
+
+        holder.user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.attemptCreatingNewConversation(uid, username);
+            }
+        });
     }
 
     @Override
@@ -52,6 +65,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.user)
+        LinearLayout user;
 
         @BindView(R.id.uid)
         TextView uid;

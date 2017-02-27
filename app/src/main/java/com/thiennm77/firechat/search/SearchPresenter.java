@@ -1,5 +1,7 @@
 package com.thiennm77.firechat.search;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -7,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thiennm77.firechat.AppHelper;
 import com.thiennm77.firechat.FirebaseHelper;
+import com.thiennm77.firechat.chat.ChatActivity;
 import com.thiennm77.firechat.models.User;
 
 import java.util.ArrayList;
@@ -61,5 +64,20 @@ public class SearchPresenter implements SearchContract.Presenter {
     public void onGettingUsersListCompleted(ArrayList<User> result) {
         mUsers = result;
         mView.onGettingUsersListCompleted(result);
+    }
+
+    @Override
+    public void attemptCreatingNewConversation(String uid, String username) {
+        mView.showProgressDialog();
+        FirebaseHelper.attemptCreatingNewConversation(this, uid, username);
+    }
+
+    @Override
+    public void openConversation(String conversationId, String username) {
+        mView.closeProgressDialog();
+        Intent intent = new Intent( (Activity) mView, ChatActivity.class);
+        intent.putExtra(ChatActivity.EXTRA_CHAT_ID, conversationId);
+        intent.putExtra(ChatActivity.EXTRA_USERNAME, username);
+        ((Activity) mView).startActivity(intent);
     }
 }

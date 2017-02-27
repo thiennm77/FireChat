@@ -1,5 +1,6 @@
 package com.thiennm77.firechat.search;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     @BindView(R.id.search)
     EditText mSearch;
 
+    private ProgressDialog mProgressDialog;
+
     private SearchContract.Presenter mPresenter;
     private UsersAdapter mAdapter;
 
@@ -62,7 +65,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         });
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
-        mAdapter = new UsersAdapter();
+        mAdapter = new UsersAdapter(mPresenter);
         mUsers.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mUsers.setLayoutManager(linearLayoutManager);
@@ -133,7 +136,26 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         filterUsersList(users, search);
     }
 
+    @Override
+    public void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(this, R.style.WhiteProgressDialog);
+        mProgressDialog.setTitle("Please wait..");
+        mProgressDialog.setMessage("Loading...");
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void closeProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
     private void filterUsersList(ArrayList<User> users, String search) {
+        if (users.size() == 0)
+            return;
+
         if (search.isEmpty()) {
             mAdapter.refresh(users);
         } else {

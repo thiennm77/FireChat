@@ -15,6 +15,10 @@ public interface SearchContract {
         void showToast(String message);
 
         void onGettingUsersListCompleted(ArrayList<User> users);
+
+        void showProgressDialog();
+
+        void closeProgressDialog();
     }
 
     interface Presenter extends BasePresenter {
@@ -24,6 +28,10 @@ public interface SearchContract {
         ArrayList<User> getUsers();
 
         void onGettingUsersListCompleted(ArrayList<User> result);
+
+        void attemptCreatingNewConversation(String uid, String username);
+
+        void openConversation(String conversationId, String username);
     }
 
 }
