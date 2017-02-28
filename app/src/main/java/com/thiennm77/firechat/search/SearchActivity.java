@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -54,13 +55,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (AppHelper.isNetworkAvailable(SearchActivity.this)) {
-                    mAdapter.clear();
-                    mPresenter.getUsersList();
-                } else {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    showToast("No internet connection");
-                }
+            refresh();
             }
         });
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
@@ -88,13 +83,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             }
         });
 
-        mSwipeRefreshLayout.setRefreshing(true);
-        if (AppHelper.isNetworkAvailable(SearchActivity.this)) {
-            mPresenter.getUsersList();
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            showToast("No internet connection");
-        }
+        refresh();
     }
 
     @Override
@@ -110,8 +99,20 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        onBackPressed();
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            refresh();
+        } else {
+            onBackPressed();
+        }
         return true;
     }
 
@@ -169,5 +170,16 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             mAdapter.refresh(filteredUsers);
         }
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void refresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (AppHelper.isNetworkAvailable(SearchActivity.this)) {
+            mAdapter.clear();
+            mPresenter.getUsersList();
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            showToast("No internet connection");
+        }
     }
 }

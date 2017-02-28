@@ -52,13 +52,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
-                    mAdapter.clear();
-                    mPresenter.getConversationsList();
-                } else {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    showToast("No internet connection");
-                }
+                refresh();
             }
         });
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
@@ -76,13 +70,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             }
         });
 
-        mSwipeRefreshLayout.setRefreshing(true);
-        if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
-            mPresenter.getConversationsList();
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            showToast("No internet connection");
-        }
+        refresh();
     }
 
     @Override
@@ -129,6 +117,9 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
                     .setTextColor(getResources().getColor(R.color.colorPrimary));
         }
+        if (id == R.id.action_refresh) {
+            refresh();
+        }
 
         return true;
     }
@@ -152,5 +143,16 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         Toast.makeText(this, message,
                 (message.length() < 70) ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG)
                 .show();
+    }
+
+    private void refresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (AppHelper.isNetworkAvailable(HomeActivity.this)) {
+            mAdapter.clear();
+            mPresenter.getConversationsList();
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            showToast("No internet connection");
+        }
     }
 }
